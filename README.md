@@ -5,16 +5,29 @@ See [`spec.md`](spec.md) for the product brief.
 
 ## Requirements
 
-- .NET SDK 9 (pinned via `global.json`, rolls forward to the latest 9.0 feature band)
+- .NET SDK 9 (pinned via `global.json`, rolls forward to the latest 9.0 feature band);
+  developed with SDK 9.0.321
+- ASP.NET Core 9 (minimal API + Razor Pages), no other runtime dependencies
+- Tests: xUnit 2.9.2, Microsoft.AspNetCore.Mvc.Testing 9.0
+- CI: GitHub Actions on `ubuntu-latest` with .NET 9.0.x (`.github/workflows/ci.yml`)
 
 ## Commands
+
+Run from the repository root:
 
 ```bash
 dotnet restore
 dotnet build
-dotnet test
-dotnet run --project src/Northwind.IncomeStatement
+dotnet test                                          # all unit, API and page tests
+dotnet run --project src/Northwind.IncomeStatement   # http://localhost:5208
 ```
+
+- **UI:** open `http://localhost:5208/` — defaults to Q1 2026; pick any start/end date.
+- **API:** `http://localhost:5208/income-statement?start=2026-01-01&end=2026-03-31` (see below).
+- The ledger is validated at startup; an invalid `ledger.json` stops the app with a list of
+  every problem. Override the path with `--Ledger:Path=<file>`.
+
+See [`NOTES.md`](NOTES.md) for the Q1 2026 result, decisions, verification and extension points.
 
 ## Data
 
