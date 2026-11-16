@@ -1,8 +1,80 @@
 @page
 @model IndexModel
+@using Northwind.IncomeStatement.Domain
 @{
     ViewData["Title"] = "Income statement";
+    var report = Model.Report;
 }
 
-<h1>Northwind Coffee Roasters — Income statement</h1>
-<p>Not implemented yet. See <code>spec.md</code>.</p>
+<h1>Income statement</h1>
+
+<form method="get" class="period-form">
+    <label for="start">Start date</label>
+    <input id="start" name="start" type="date" value="@Model.Start" />
+    <label for="end">End date</label>
+    <input id="end" name="end" type="date" value="@Model.End" />
+    <button type="submit">Show statement</button>
+</form>
+
+@if (Model.Errors.Count > 0)
+{
+    <div class="message error" role="alert">
+        <p><strong>The statement could not be produced because the period is invalid:</strong></p>
+        <ul>
+            @foreach (var error in Model.Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@if (report is not null)
+{
+    <section class="statement" aria-labelledby="statement-heading">
+        <header>
+            <h2 id="statement-heading">@report.Company</h2>
+            <p class="period">
+                Income statement for the period
+                <time datetime="@report.Start.ToString("yyyy-MM-dd")">@report.Start.ToString("yyyy-MM-dd")</time>
+                to
+                <time datetime="@report.End.ToString("yyyy-MM-dd")">@report.End.ToString("yyyy-MM-dd")</time>
+                (both inclusive) &middot; Currency: <span class="currency">@report.Currency</span>
+            </p>
+        </header>
+
+        @if (!report.HasActivity)
+        {
+            <p class="message info" role="status">No posted activity in this period. All amounts are zero.</p>
+        }
+
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Account</th>
+                    <th scope="col">Name</th>
+                    <th scope="col" class="amount">Amount (@report.Currency)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @await Html.PartialAsync("_StatementSection", (report.Revenue, "Net revenue"))
+                @await Html.PartialAsync("_StatementSection", (report.CostOfGoodsSold, "Total cost of goods sold"))
+                <tr class="profit">
+                    <th scope="row" colspan="2">Gross profit</th>
+                    <td class="amount">@report.GrossProfit.ToAccountingString()</td>
+                </tr>
+                @await Html.PartialAsync("_StatementSection", (report.OperatingExpenses, "Total operating expenses"))
+                <tr class="profit">
+                    <th scope="row" colspan="2">Operating income</th>
+                    <td class="amount">@report.OperatingIncome.ToAccountingString()</td>
+                </tr>
+                @await Html.PartialAsync("_StatementSection", (report.OtherIncome, "Total other income"))
+                <tr class="profit net-income">
+                    <th scope="row" colspan="2">Net income</th>
+                    <td class="amount">@report.NetIncome.ToAccountingString()</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="note">Negative amounts are shown in parentheses. Only posted journal entries are included.</p>
+    </section>
+}
