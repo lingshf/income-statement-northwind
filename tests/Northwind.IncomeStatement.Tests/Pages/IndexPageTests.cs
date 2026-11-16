@@ -26,7 +26,8 @@ public class IndexPageTests(WebApplicationFactory<Program> factory) : IClassFixt
         Assert.Contains("<label for=\"start\">Start date</label> <input id=\"start\" name=\"start\" type=\"date\" value=\"2026-01-01\" />", html);
         Assert.Contains("<label for=\"end\">End date</label> <input id=\"end\" name=\"end\" type=\"date\" value=\"2026-03-31\" />", html);
         Assert.Contains("Northwind Coffee Roasters", html);
-        Assert.Contains("Currency: <span class=\"currency\">USD</span>", html);
+        Assert.Contains("<p class=\"statement-title\">Income Statement</p>", html);
+        Assert.Contains("<p class=\"currency\">(<span>USD</span>)</p>", html);
         Assert.Contains("(44,480.14)", Row(html, "Net income"));
     }
 
@@ -35,8 +36,8 @@ public class IndexPageTests(WebApplicationFactory<Program> factory) : IClassFixt
     {
         var html = await GetPage("?start=2026-01-01&end=2026-03-31");
 
-        Assert.Contains("<td class=\"account\">4000</td> <td>Product Revenue</td> <td class=\"amount\">35,650.75</td>", html);
-        Assert.Contains("<td class=\"account\">4900</td> <td>Sales Returns &amp; Discounts</td> <td class=\"amount\">(800.25)</td>", html);
+        Assert.Contains("<th scope=\"row\"><span class=\"account-number\">4000</span> Product Revenue</th> <td class=\"amount\">35,650.75</td>", html);
+        Assert.Contains("<th scope=\"row\"><span class=\"account-number\">4900</span> Sales Returns &amp; Discounts</th> <td class=\"amount\">(800.25)</td>", html);
         Assert.Contains("(44,522.32)", Row(html, "Operating income"));
 
         string[] order =
@@ -55,7 +56,7 @@ public class IndexPageTests(WebApplicationFactory<Program> factory) : IClassFixt
     {
         var html = await GetPage("?start=2026-03-31&end=2026-03-31");
 
-        Assert.Contains("<time datetime=\"2026-03-31\">2026-03-31</time> to <time datetime=\"2026-03-31\">2026-03-31</time>", html);
+        Assert.Contains("For the period <time datetime=\"2026-03-31\">Mar 31, 2026</time> &ndash; <time datetime=\"2026-03-31\">Mar 31, 2026</time>", html);
         Assert.Contains("(17,457.82)", Row(html, "Net income"));
         Assert.DoesNotContain("No posted activity", html);
     }

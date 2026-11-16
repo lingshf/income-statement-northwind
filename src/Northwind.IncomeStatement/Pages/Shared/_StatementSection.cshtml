@@ -1,18 +1,19 @@
 @using Northwind.IncomeStatement.Domain
 @model (StatementSection Section, string SubtotalLabel)
 
-<tr class="section-heading">
-    <th scope="rowgroup" colspan="3">@Model.Section.Title</th>
-</tr>
-@foreach (var line in Model.Section.Lines)
-{
-    <tr class="account-line">
-        <td class="account">@line.AccountNumber</td>
-        <td>@line.AccountName</td>
-        <td class="amount">@line.Amount.ToAccountingString()</td>
+<tbody class="section">
+    <tr class="section-heading">
+        <th scope="rowgroup" colspan="2">@Model.Section.Title</th>
     </tr>
-}
-<tr class="subtotal">
-    <th scope="row" colspan="2">@Model.SubtotalLabel</th>
-    <td class="amount">@Model.Section.Subtotal.ToAccountingString()</td>
-</tr>
+    @foreach (var line in Model.Section.Lines)
+    {
+        <tr class="account-line">
+            <th scope="row"><span class="account-number">@line.AccountNumber</span> @line.AccountName</th>
+            <td class="amount">@line.Amount.ToAccountingString()</td>
+        </tr>
+    }
+    <tr class="subtotal">
+        <th scope="row">@Model.SubtotalLabel</th>
+        <td class="amount">@Model.Section.Subtotal.ToAccountingString()</td>
+    </tr>
+</tbody>
