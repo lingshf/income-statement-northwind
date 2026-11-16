@@ -1,7 +1,39 @@
 body {
-  font-family: system-ui, sans-serif;
-  margin: 2rem;
-  color: #111;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  color: #1a1a1a;
+  background: #fafafa;
+  line-height: 1.4;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Period picker: a separate panel above the report. */
+.controls {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.controls h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: #555;
 }
 
 .period-form {
@@ -9,13 +41,12 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 0.75rem;
-  margin-bottom: 1.5rem;
 }
 
 .message {
   padding: 0.75rem 1rem;
   border-radius: 4px;
-  max-width: 44rem;
+  margin: 0 0 1.5rem;
 }
 
 .message.error {
@@ -28,55 +59,150 @@ body {
   border: 1px solid #1565c0;
 }
 
+/* The report itself. */
+.statement {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1.5rem 2rem;
+}
+
+.statement-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.statement-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.statement-header p {
+  margin: 0.15rem 0;
+}
+
+.statement-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.statement-header .period,
+.statement-header .currency {
+  color: #555;
+}
+
 .statement table {
+  width: 100%;
   border-collapse: collapse;
-  min-width: 34rem;
 }
 
 .statement th,
 .statement td {
-  padding: 0.3rem 0.75rem;
+  padding: 0.25rem 0.5rem;
   text-align: left;
-}
-
-.statement .account {
-  font-family: ui-monospace, monospace;
-  white-space: nowrap;
-  color: #444;
+  font-weight: normal;
 }
 
 .statement .amount {
+  width: 9rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.statement thead th {
-  border-bottom: 2px solid #111;
+/* Whitespace between sections. */
+.statement tbody.section::before,
+.statement tbody.result::before {
+  content: "";
+  display: block;
+  height: 0.75rem;
 }
 
 .statement .section-heading th {
-  padding-top: 1rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.statement .account-line th {
+  padding-left: 1.5rem;
+}
+
+.statement .account-number {
+  display: inline-block;
+  min-width: 2.75rem;
+  font-size: 0.8rem;
+  color: #888;
+  font-variant-numeric: tabular-nums;
+}
+
+.statement .account-line:hover {
+  background: #f6f8fa;
 }
 
 .statement .subtotal th,
 .statement .subtotal td {
   font-weight: 600;
-  border-top: 1px solid #888;
+}
+
+.statement .subtotal td {
+  border-top: 1px solid #999;
 }
 
 .statement .profit th,
-.statement .profit td {
+.statement .profit td,
+.statement .net-income th,
+.statement .net-income td {
   font-weight: 700;
-  background: #f3f3f3;
+}
+
+.statement .profit td {
+  border-top: 2px solid #1a1a1a;
+}
+
+.statement .net-income th,
+.statement .net-income td {
+  font-size: 1.05rem;
 }
 
 .statement .net-income td {
-  border-bottom: 3px double #111;
+  border-top: 2px solid #1a1a1a;
+  border-bottom: 3px double #1a1a1a;
+}
+
+/* Colour is secondary; parentheses remain the primary loss signal. */
+.statement .net-income.loss td {
+  color: #b71c1c;
 }
 
 .note {
-  color: #555;
-  font-size: 0.9rem;
+  margin: 1.25rem 0 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+@media print {
+  body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .controls {
+    display: none;
+  }
+
+  .statement {
+    border: none;
+    padding: 0;
+  }
+
+  .statement .account-line:hover {
+    background: none;
+  }
+
+  .statement .net-income.loss td {
+    color: inherit;
+  }
 }
