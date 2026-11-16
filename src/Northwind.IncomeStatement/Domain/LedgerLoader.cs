@@ -20,32 +20,6 @@ public static class LedgerLoader
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
     };
 
-    private static readonly Dictionary<string, AccountType> AccountTypes = new(StringComparer.Ordinal)
-    {
-        ["asset"] = AccountType.Asset,
-        ["liability"] = AccountType.Liability,
-        ["equity"] = AccountType.Equity,
-        ["revenue"] = AccountType.Revenue,
-        ["expense"] = AccountType.Expense,
-    };
-
-    private static readonly Dictionary<string, AccountSubtype> AccountSubtypes = new(StringComparer.Ordinal)
-    {
-        ["operating_revenue"] = AccountSubtype.OperatingRevenue,
-        ["contra_revenue"] = AccountSubtype.ContraRevenue,
-        ["cogs"] = AccountSubtype.Cogs,
-        ["operating_expense"] = AccountSubtype.OperatingExpense,
-        ["other_income"] = AccountSubtype.OtherIncome,
-        ["balance_sheet"] = AccountSubtype.BalanceSheet,
-    };
-
-    private static readonly Dictionary<string, EntryStatus> Statuses = new(StringComparer.Ordinal)
-    {
-        ["posted"] = EntryStatus.Posted,
-        ["draft"] = EntryStatus.Draft,
-        ["void"] = EntryStatus.Void,
-    };
-
     public static Ledger LoadFile(string path)
     {
         if (!File.Exists(path))
@@ -133,13 +107,13 @@ public static class LedgerLoader
                 errors.Add($"{where} has no 'name'.");
             }
 
-            var typeOk = TryMap(AccountTypes, raw.Type, out var type);
+            var typeOk = SnakeCase<AccountType>.TryParse(raw.Type, out var type);
             if (!typeOk)
             {
                 errors.Add($"{where} has unknown type '{raw.Type}'.");
             }
 
-            var subtypeOk = TryMap(AccountSubtypes, raw.Subtype, out var subtype);
+            var subtypeOk = SnakeCase<AccountSubtype>.TryParse(raw.Subtype, out var subtype);
             if (!subtypeOk)
             {
                 errors.Add($"{where} has unknown subtype '{raw.Subtype}'.");
@@ -202,13 +176,15 @@ public static class LedgerLoader
                 errors.Add($"{where} has invalid date '{raw.Date}'; expected a real calendar date as YYYY-MM-DD.");
             }
 
-            if (!TryMap(Statuses, raw.Status, out var status))
+            if (!SnakeCase<EntryStatus>.TryParse(raw.Status, out var status))
             {
                 errors.Add($"{where} has unknown status '{raw.Status}'.");
             }
 
-            var lines = ValidateLines(raw.Lines, where, accounts, errors, out var linesOk);
-            if (linesOk)
+            // Balance is only meaningful when every line parsed cleanly, i.e. ValidateLines added no errors.
+            var errorsBeforeLines = errors.Count;
+            var lines = ValidateLines(raw.Lines, where, accounts, errors);
+            if (errors.Count == errorsBeforeLines)
             {
                 var debits = Money.Sum(lines.Select(l => l.Debit));
                 var credits = Money.Sum(lines.Select(l => l.Credit));
@@ -228,15 +204,12 @@ public static class LedgerLoader
         List<RawLine?>? rawLines,
         string entry,
         Dictionary<string, Account> accounts,
-        List<string> errors,
-        out bool allLinesValid)
+        List<string> errors)
     {
         var lines = new List<JournalLine>();
-        allLinesValid = true;
         if (rawLines is null || rawLines.Count < 2)
         {
             errors.Add($"{entry} must have at least 2 lines.");
-            allLinesValid = false;
             return lines;
         }
 
@@ -247,28 +220,24 @@ public static class LedgerLoader
             if (raw is null)
             {
                 errors.Add($"{where} is null.");
-                allLinesValid = false;
                 continue;
             }
 
             if (raw.Account is null || !accounts.ContainsKey(raw.Account))
             {
                 errors.Add($"{where} references unknown account '{raw.Account}'.");
-                allLinesValid = false;
             }
 
             var debitOk = TryParseAmount(raw.Debit, $"{where} debit", errors, out var debit);
             var creditOk = TryParseAmount(raw.Credit, $"{where} credit", errors, out var credit);
             if (!debitOk || !creditOk)
             {
-                allLinesValid = false;
                 continue;
             }
 
             if (debit.IsZero == credit.IsZero)
             {
                 errors.Add($"{where} must have exactly one of debit/credit non-zero (debit {debit}, credit {credit}).");
-                allLinesValid = false;
             }
 
             lines.Add(new JournalLine(raw.Account ?? "", debit, credit));
@@ -294,12 +263,6 @@ public static class LedgerLoader
         return true;
     }
 
-    private static bool TryMap<T>(Dictionary<string, T> map, string? key, out T value) where T : struct
-    {
-        value = default;
-        return key is not null && map.TryGetValue(key, out value);
-    }
-
     private static bool IsConsistent(AccountType type, AccountSubtype subtype) => type switch
     {
         AccountType.Revenue => subtype is AccountSubtype.OperatingRevenue or AccountSubtype.ContraRevenue or AccountSubtype.OtherIncome,
@@ -314,4 +277,20 @@ public static class LedgerLoader
     private sealed record RawEntry(string? Id, string? Date, string? Status, string? Memo, List<RawLine?>? Lines);
 
     private sealed record RawLine(string? Account, string? Debit, string? Credit);
+
+    /// <summary>
+    /// Maps the ledger's exact snake_case names to enum members, e.g. "operating_revenue" to OperatingRevenue.
+    /// Ordinal and case-sensitive; numeric strings and any other spelling are rejected.
+    /// </summary>
+    private static class SnakeCase<T> where T : struct, Enum
+    {
+        private static readonly Dictionary<string, T> Names = Enum.GetValues<T>()
+            .ToDictionary(v => JsonNamingPolicy.SnakeCaseLower.ConvertName(v.ToString()), StringComparer.Ordinal);
+
+        public static bool TryParse(string? text, out T value)
+        {
+            value = default;
+            return text is not null && Names.TryGetValue(text, out value);
+        }
+    }
 }
