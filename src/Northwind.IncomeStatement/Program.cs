@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Load and validate the ledger before the app starts so bad data fails fast.
 var ledgerPath = builder.Configuration["Ledger:Path"] ?? Path.Combine(AppContext.BaseDirectory, "ledger.json");
 builder.Services.AddSingleton(LedgerLoader.LoadFile(ledgerPath));
+builder.Services.AddSingleton<IncomeStatementService>();
 
 builder.Services.AddRazorPages();
 
