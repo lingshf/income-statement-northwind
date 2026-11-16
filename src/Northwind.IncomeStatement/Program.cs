@@ -1,3 +1,4 @@
+using Northwind.IncomeStatement.Api;
 using Northwind.IncomeStatement.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ app.MapRazorPages()
    .WithStaticAssets();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+app.MapIncomeStatementApi();
 
 app.Run();
 
