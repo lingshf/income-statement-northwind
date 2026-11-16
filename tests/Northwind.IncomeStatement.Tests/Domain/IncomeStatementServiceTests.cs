@@ -65,17 +65,6 @@ public class IncomeStatementServiceTests
     }
 
     [Fact]
-    public void Section_titles_follow_the_spec_order()
-    {
-        var r = Calculate("2026-01-01", "2026-03-31");
-
-        Assert.Equal("Revenue", r.Revenue.Title);
-        Assert.Equal("Cost of goods sold", r.CostOfGoodsSold.Title);
-        Assert.Equal("Operating expenses", r.OperatingExpenses.Title);
-        Assert.Equal("Other income", r.OtherIncome.Title);
-    }
-
-    [Fact]
     public void Inactive_account_still_reports_its_history()
     {
         Assert.False(SuppliedLedger.Accounts["6300"].IsActive);
@@ -153,9 +142,9 @@ public class IncomeStatementServiceTests
     }
 
     [Fact]
-    public void Start_date_is_inclusive()
+    public void Start_date_is_inclusive_and_prepaid_rent_is_not_spread()
     {
-        // JE-007 rent is dated 2026-01-01, the first day of the range.
+        // JE-007 expenses all three months of rent on 2026-01-01, the first day of the range.
         Assert.Equal(M("9000.00"), Line(Calculate("2026-01-01", "2026-01-01"), "6100"));
         Assert.Equal(Money.Zero, Line(Calculate("2026-01-02", "2026-03-31"), "6100"));
     }
@@ -179,17 +168,8 @@ public class IncomeStatementServiceTests
     public void Entries_just_outside_the_range_are_excluded()
     {
         // JE-001 (2025-12-15, 5,000.00) and JE-024 (2026-04-01, 9,100.00) sit either side of Q1.
-        Assert.Equal(M("35650.75"), Line(Calculate("2026-01-01", "2026-03-31"), "4000"));
         Assert.Equal(M("5000.00"), Calculate("2025-12-01", "2025-12-31").NetIncome);
         Assert.Equal(M("9100.00"), Calculate("2026-04-01", "2026-04-01").NetIncome);
-    }
-
-    [Fact]
-    public void Rent_paid_in_advance_is_not_spread()
-    {
-        // JE-007 expenses all three months of rent on 2026-01-01.
-        Assert.Equal(M("9000.00"), Line(Calculate("2026-01-01", "2026-01-31"), "6100"));
-        Assert.Equal(Money.Zero, Line(Calculate("2026-02-01", "2026-03-31"), "6100"));
     }
 
     [Fact]

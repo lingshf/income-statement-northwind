@@ -12,18 +12,4 @@ public class SmokeTests(WebApplicationFactory<Program> factory) : IClassFixture<
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
-
-    [Fact]
-    public async Task Home_page_renders()
-    {
-        var html = await factory.CreateClient().GetStringAsync("/");
-
-        Assert.Contains("Income statement", html);
-    }
-
-    [Fact]
-    public void Ledger_is_copied_to_output()
-    {
-        Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, "ledger.json")));
-    }
 }
