@@ -33,7 +33,8 @@ public sealed class IncomeStatementService(Ledger ledger)
             throw new ArgumentException($"Start date {start:yyyy-MM-dd} is after end date {end:yyyy-MM-dd}.", nameof(start));
         }
 
-        var activity = new Dictionary<string, (Money Debits, Money Credits)>(StringComparer.Ordinal);
+        // Net debit (debits − credits) per account; each section then applies its sign rule.
+        var netDebits = new Dictionary<string, Money>(StringComparer.Ordinal);
         var hasActivity = false;
         foreach (var entry in ledger.Entries.Where(e => IsIncluded(e, start, end)))
         {
@@ -44,8 +45,7 @@ public sealed class IncomeStatementService(Ledger ledger)
                     continue;
                 }
 
-                var (debits, credits) = activity.GetValueOrDefault(line.AccountNumber);
-                activity[line.AccountNumber] = (debits + line.Debit, credits + line.Credit);
+                netDebits[line.AccountNumber] = netDebits.GetValueOrDefault(line.AccountNumber) + line.Debit - line.Credit;
                 hasActivity = true;
             }
         }
@@ -57,8 +57,8 @@ public sealed class IncomeStatementService(Ledger ledger)
                 .OrderBy(a => a.Number, StringComparer.Ordinal)
                 .Select(a =>
                 {
-                    var (debits, credits) = activity.GetValueOrDefault(a.Number);
-                    var amount = definition.Sign == SignRule.CreditsMinusDebits ? credits - debits : debits - credits;
+                    var netDebit = netDebits.GetValueOrDefault(a.Number);
+                    var amount = definition.Sign == SignRule.CreditsMinusDebits ? -netDebit : netDebit;
                     return new StatementLine(a.Number, a.Name, amount);
                 })
                 .ToList();

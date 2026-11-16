@@ -25,7 +25,12 @@ public static class IncomeStatementEndpoints
     }
 }
 
-/// <summary>JSON contract for <c>GET /income-statement</c>. Money values serialize as exact 2-decimal strings.</summary>
+/// <summary>
+/// JSON contract for <c>GET /income-statement</c>. Money values serialize as exact 2-decimal strings.
+/// Kept separate from the domain records on purpose: it nests the period, names line fields
+/// <c>account</c>/<c>name</c> and places <c>netRevenue</c> after the revenue section, so the wire
+/// format stays stable when domain types change.
+/// </summary>
 public sealed record IncomeStatementResponse(
     string Company,
     string Currency,
@@ -60,7 +65,7 @@ public sealed record PeriodDto(DateOnly Start, DateOnly End);
 public sealed record SectionDto(string Title, IReadOnlyList<LineDto> Lines, Money Subtotal)
 {
     public static SectionDto From(StatementSection s) =>
-        new(s.Title, s.Lines.Select(l => new LineDto(l.AccountNumber, l.AccountName, l.Amount)).ToList(), s.Subtotal);
+        new(s.Title, [.. s.Lines.Select(l => new LineDto(l.AccountNumber, l.AccountName, l.Amount))], s.Subtotal);
 }
 
 public sealed record LineDto(string Account, string Name, Money Amount);

@@ -90,6 +90,8 @@ public class LedgerLoaderTests
     [InlineData("\"date\": \"2026-01-31\"", "\"date\": \"2026-1-31\"", "JE-1 has invalid date '2026-1-31'")]
     [InlineData("\"date\": \"2026-01-31\"", "\"date\": \"2026-01-31T00:00:00\"", "JE-1 has invalid date")]
     [InlineData("\"status\": \"posted\"", "\"status\": \"Posted\"", "JE-1 has unknown status 'Posted'")]
+    [InlineData("\"status\": \"posted\"", "\"status\": \"0\"", "JE-1 has unknown status '0'")]
+    [InlineData("\"subtype\": \"operating_revenue\"", "\"subtype\": \"OperatingRevenue\"", "Account 4000 has unknown subtype 'OperatingRevenue'")]
     [InlineData("\"type\": \"revenue\"", "\"type\": \"income\"", "Account 4000 has unknown type 'income'")]
     [InlineData("\"subtype\": \"operating_revenue\"", "\"subtype\": \"sales\"", "Account 4000 has unknown subtype 'sales'")]
     [InlineData("\"subtype\": \"operating_revenue\"", "\"subtype\": \"cogs\"", "Account 4000 has subtype 'cogs', which is not valid for type 'revenue'")]

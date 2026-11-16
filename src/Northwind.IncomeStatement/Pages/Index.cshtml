@@ -78,7 +78,7 @@
             </tbody>
             @await Html.PartialAsync("_StatementSection", (report.OtherIncome, "Total other income"))
             <tbody class="result">
-                <tr class="net-income @(report.NetIncome < Money.Zero ? "loss" : "")">
+                <tr class="net-income @(report.NetIncome < Money.Zero ? "loss" : null)">
                     <th scope="row">Net income</th>
                     <td class="amount">@report.NetIncome.ToAccountingString()</td>
                 </tr>
