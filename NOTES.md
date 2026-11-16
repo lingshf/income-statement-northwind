@@ -49,17 +49,3 @@ expenses 68,100.07, operating income −44,522.32, other income 42.18.
 - There is only one currency (USD) and one company. There is no authentication.
 - Possible next steps: a CSV/PDF export, and a period picker with presets (month, quarter, YTD).
 
-## Extension points (designed for, not implemented)
-
-1. **Comparative periods (columns side by side).** `IncomeStatementService.Calculate(start, end)`
-   depends only on its date range and the immutable `Ledger`. To add columns, call it once per period
-   and zip the reports by account number; every account is always listed, so the rows line up. Only the
-   API DTO and the Razor table would change.
-2. **Including draft entries (or filtering by another entry or line attribute).** Every inclusion rule
-   lives in one private predicate, `IncomeStatementService.IsIncluded`. Making it a parameter (for
-   example a set of included statuses) changes only that seam; the request would pass the option
-   through.
-3. **New sections or account subtypes** (for example "Other expense" or "Income tax").
-   `StatementLayout.Sections` is data: each section lists its subtypes and its sign rule, and
-   `SectionFor` derives the subtype-to-section map from it. To add one, add the subtype enum value,
-   one `SectionDefinition` and a report and UI row; the calculation loop doesn't change.
