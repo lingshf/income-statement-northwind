@@ -1,0 +1,52 @@
+entry_id,date,status,memo,line_no,account,account_name,account_type,account_subtype,account_is_active,debit,credit
+JE-001,2025-12-15,posted,"December product sales",1,1100,"Accounts Receivable",asset,balance_sheet,true,5000.00,0.00
+JE-001,2025-12-15,posted,"December product sales",2,4000,"Product Revenue",revenue,operating_revenue,true,0.00,5000.00
+JE-002,2026-01-05,posted,"January product sales",1,1100,"Accounts Receivable",asset,balance_sheet,true,12450.75,0.00
+JE-002,2026-01-05,posted,"January product sales",2,4000,"Product Revenue",revenue,operating_revenue,true,0.00,12450.75
+JE-003,2026-01-05,posted,"January cost of goods sold",1,5000,"Cost of Goods Sold",expense,cogs,true,4980.30,0.00
+JE-003,2026-01-05,posted,"January cost of goods sold",2,1200,"Inventory",asset,balance_sheet,true,0.00,4980.30
+JE-004,2026-01-10,posted,"Annual subscription billed to Acme Cafes",1,1100,"Accounts Receivable",asset,balance_sheet,true,12000.00,0.00
+JE-004,2026-01-10,posted,"Annual subscription billed to Acme Cafes",2,2100,"Deferred Revenue",liability,balance_sheet,true,0.00,12000.00
+JE-005,2026-01-31,posted,"Recognize January subscription revenue",1,2100,"Deferred Revenue",liability,balance_sheet,true,1000.00,0.00
+JE-005,2026-01-31,posted,"Recognize January subscription revenue",2,4100,"Subscription Revenue",revenue,operating_revenue,true,0.00,1000.00
+JE-006,2026-01-31,posted,"January payroll",1,6000,"Salaries",expense,operating_expense,true,18500.00,0.00
+JE-006,2026-01-31,posted,"January payroll",2,1000,"Cash",asset,balance_sheet,true,0.00,18500.00
+JE-007,2026-01-01,posted,"January to March rent, expensed when paid",1,6100,"Rent",expense,operating_expense,true,9000.00,0.00
+JE-007,2026-01-01,posted,"January to March rent, expensed when paid",2,1000,"Cash",asset,balance_sheet,true,0.00,9000.00
+JE-008,2026-01-20,posted,"Coffee Expo booth",1,6300,"Marketing (legacy)",expense,operating_expense,false,2500.10,0.00
+JE-008,2026-01-20,posted,"Coffee Expo booth",2,2000,"Accounts Payable",liability,balance_sheet,true,0.00,2500.10
+JE-009,2026-02-03,void,"February product sales (entered twice)",1,1100,"Accounts Receivable",asset,balance_sheet,true,8200.00,0.00
+JE-009,2026-02-03,void,"February product sales (entered twice)",2,4000,"Product Revenue",revenue,operating_revenue,true,0.00,8200.00
+JE-010,2026-02-03,posted,"February product sales",1,1100,"Accounts Receivable",asset,balance_sheet,true,8200.00,0.00
+JE-010,2026-02-03,posted,"February product sales",2,4000,"Product Revenue",revenue,operating_revenue,true,0.00,8200.00
+JE-011,2026-02-03,posted,"February cost of goods sold",1,5000,"Cost of Goods Sold",expense,cogs,true,3280.00,0.00
+JE-011,2026-02-03,posted,"February cost of goods sold",2,1200,"Inventory",asset,balance_sheet,true,0.00,3280.00
+JE-012,2026-02-14,posted,"Returned order, Blue Door Cafe",1,4900,"Sales Returns & Discounts",revenue,contra_revenue,true,650.25,0.00
+JE-012,2026-02-14,posted,"Returned order, Blue Door Cafe",2,1100,"Accounts Receivable",asset,balance_sheet,true,0.00,650.25
+JE-013,2026-02-15,posted,"Payment received for January sales",1,1000,"Cash",asset,balance_sheet,true,12450.75,0.00
+JE-013,2026-02-15,posted,"Payment received for January sales",2,1100,"Accounts Receivable",asset,balance_sheet,true,0.00,12450.75
+JE-014,2026-02-28,posted,"Recognize February subscription revenue",1,2100,"Deferred Revenue",liability,balance_sheet,true,1000.00,0.00
+JE-014,2026-02-28,posted,"Recognize February subscription revenue",2,4100,"Subscription Revenue",revenue,operating_revenue,true,0.00,1000.00
+JE-015,2026-02-28,posted,"February payroll",1,6000,"Salaries",expense,operating_expense,true,18500.00,0.00
+JE-015,2026-02-28,posted,"February payroll",2,1000,"Cash",asset,balance_sheet,true,0.00,18500.00
+JE-016,2026-03-02,posted,"March product sales, 1% volume discount",1,1100,"Accounts Receivable",asset,balance_sheet,true,14850.00,0.00
+JE-016,2026-03-02,posted,"March product sales, 1% volume discount",2,4900,"Sales Returns & Discounts",revenue,contra_revenue,true,150.00,0.00
+JE-016,2026-03-02,posted,"March product sales, 1% volume discount",3,4000,"Product Revenue",revenue,operating_revenue,true,0.00,15000.00
+JE-017,2026-03-02,posted,"March cost of goods sold",1,5000,"Cost of Goods Sold",expense,cogs,true,6012.45,0.00
+JE-017,2026-03-02,posted,"March cost of goods sold",2,1200,"Inventory",asset,balance_sheet,true,0.00,6012.45
+JE-018,2026-03-10,posted,"Software subscriptions",1,6200,"Software",expense,operating_expense,true,1199.97,0.00
+JE-018,2026-03-10,posted,"Software subscriptions",2,2000,"Accounts Payable",liability,balance_sheet,true,0.00,1199.97
+JE-019,2026-03-15,draft,"Q1 bonus accrual (pending approval)",1,6000,"Salaries",expense,operating_expense,true,5000.00,0.00
+JE-019,2026-03-15,draft,"Q1 bonus accrual (pending approval)",2,2000,"Accounts Payable",liability,balance_sheet,true,0.00,5000.00
+JE-020,2026-03-20,posted,"Credit from software vendor for overbilling",1,2000,"Accounts Payable",liability,balance_sheet,true,100.00,0.00
+JE-020,2026-03-20,posted,"Credit from software vendor for overbilling",2,6200,"Software",expense,operating_expense,true,0.00,100.00
+JE-021,2026-03-31,posted,"Recognize March subscription revenue",1,2100,"Deferred Revenue",liability,balance_sheet,true,1000.00,0.00
+JE-021,2026-03-31,posted,"Recognize March subscription revenue",2,4100,"Subscription Revenue",revenue,operating_revenue,true,0.00,1000.00
+JE-022,2026-03-31,posted,"March payroll",1,6000,"Salaries",expense,operating_expense,true,18500.00,0.00
+JE-022,2026-03-31,posted,"March payroll",2,1000,"Cash",asset,balance_sheet,true,0.00,18500.00
+JE-023,2026-03-31,posted,"Interest earned, March",1,1000,"Cash",asset,balance_sheet,true,42.18,0.00
+JE-023,2026-03-31,posted,"Interest earned, March",2,7000,"Interest Income",revenue,other_income,true,0.00,42.18
+JE-024,2026-04-01,posted,"April product sales",1,1100,"Accounts Receivable",asset,balance_sheet,true,9100.00,0.00
+JE-024,2026-04-01,posted,"April product sales",2,4000,"Product Revenue",revenue,operating_revenue,true,0.00,9100.00
+JE-025,2026-03-18,void,"Payment received from Blue Door Cafe (check returned unsigned)",1,1000,"Cash",asset,balance_sheet,true,3200.00,0.00
+JE-025,2026-03-18,void,"Payment received from Blue Door Cafe (check returned unsigned)",2,1100,"Accounts Receivable",asset,balance_sheet,true,0.00,3200.00
