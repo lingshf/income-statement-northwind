@@ -24,8 +24,7 @@ public sealed class BankTransactionsValidationException(IReadOnlyList<string> er
 /// </summary>
 public static class BankTransactionLoader
 {
-    // Kebab case maps BankEntries to "bank-entries" and Id/Date/... to "id"/"date"/...
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
     public static BankTransactions LoadFile(string path)
     {
@@ -51,7 +50,7 @@ public static class BankTransactionLoader
 
         if (raw?.BankEntries is null)
         {
-            throw new BankTransactionsValidationException(["Bank transactions file must contain a 'bank-entries' array."]);
+            throw new BankTransactionsValidationException(["Bank transactions file must contain a 'bank_entries' array."]);
         }
 
         var errors = new List<string>();

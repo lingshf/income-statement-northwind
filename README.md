@@ -35,7 +35,7 @@ See [`NOTES.md`](NOTES.md) for the Q1 2026 result, decisions, verification and e
 
 - `ledger.json` — chart of accounts and journal entries; the application's only accounting data source.
 - `bank_transactions.json` — bank statement lines for reconciliation, kept separate from the
-  ledger. Top level `bank-entries` array; each entry has a unique `id`, `date` (`YYYY-MM-DD`),
+  ledger, in the same snake_case style. Top level `bank_entries` array; each entry has a unique `id`, `date` (`YYYY-MM-DD`),
   `amount` (signed exact 2-decimal string: positive in, negative out), and `description`.
   Validated at startup like the ledger; override the path with `--BankTransactions:Path=<file>`.
 - `ledger.csv` — the same journal, one row per line with account details joined in, for

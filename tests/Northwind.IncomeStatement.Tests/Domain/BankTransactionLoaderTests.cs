@@ -7,7 +7,7 @@ public class BankTransactionLoaderTests
 {
     private const string Valid = """
         {
-          "bank-entries": [
+          "bank_entries": [
             {"id": "BT-1", "date": "2026-02-02", "amount": "-100.10", "description": "Payment"},
             {"id": "BT-2", "date": "2026-02-03", "amount": "25.00", "description": "Deposit"}
           ]
@@ -40,7 +40,7 @@ public class BankTransactionLoaderTests
     [Fact]
     public void Empty_array_is_allowed()
     {
-        Assert.Empty(BankTransactionLoader.Parse("""{"bank-entries": []}""").Entries);
+        Assert.Empty(BankTransactionLoader.Parse("""{"bank_entries": []}""").Entries);
     }
 
     [Theory]
@@ -49,7 +49,7 @@ public class BankTransactionLoaderTests
     [InlineData("\"amount\": \"-100.10\"", "\"amount\": \"-100.1\"", "BT-1 amount '-100.1' is not a valid amount")]
     [InlineData("\"id\": \"BT-2\"", "\"id\": \"BT-1\"", "BT-1 is defined more than once")]
     [InlineData("\"id\": \"BT-1\", ", "", "Bank entry #1 is missing 'id'")]
-    [InlineData("\"bank-entries\"", "\"bank_entries\"", "must contain a 'bank-entries' array")]
+    [InlineData("\"bank_entries\"", "\"bank-entries\"", "must contain a 'bank_entries' array")]
     [InlineData("\"amount\": \"-100.10\"", "\"amount\": -100.10", "not valid JSON")]
     public void Invalid_file_fails_fast_with_a_clear_error(string find, string replace, string expectedError)
     {
