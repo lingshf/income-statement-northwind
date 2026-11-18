@@ -23,6 +23,8 @@ dotnet run --project src/Northwind.IncomeStatement   # http://localhost:5208
 ```
 
 - **UI:** open `http://localhost:5208/` — defaults to Q1 2026; pick any start/end date.
+- **Bank reconciliation:** open `http://localhost:5208/reconciliation` or use the
+  navigation link to see matched pairs and unmatched bank/journal records for all dates.
 - **API:** `http://localhost:5208/income-statement?start=2026-01-01&end=2026-03-31` (see below).
 - The ledger is validated at startup; an invalid `ledger.json` stops the app with a list of
   every problem. Override the path with `--Ledger:Path=<file>`.
@@ -31,9 +33,36 @@ See [`NOTES.md`](NOTES.md) for the Q1 2026 result, decisions, verification and e
 
 ## Data
 
-- `ledger.json` — chart of accounts and journal entries; the application's only data source.
+- `ledger.json` — chart of accounts and journal entries; the application's only accounting data source.
+- `bank_transactions.json` — bank statement lines for reconciliation, kept separate from the
+  ledger. Top level `bank-entries` array; each entry has a unique `id`, `date` (`YYYY-MM-DD`),
+  `amount` (signed exact 2-decimal string: positive in, negative out), and `description`.
+  Validated at startup like the ledger; override the path with `--BankTransactions:Path=<file>`.
 - `ledger.csv` — the same journal, one row per line with account details joined in, for
   manual verification in a spreadsheet. Not read by the application.
+
+## Bank reconciliation
+
+The domain method `IncomeStatementService.MatchBankEntryWithCashEntry(bankEntries)` matches
+the given bank entries against the ledger and returns
+`Matches` (bank/journal pairs), `UnmatchedBankEntries`, and `UnmatchedJournalEntries`.
+The read-only `/reconciliation` page uses this method, showing counts, record IDs,
+dates, descriptions/memos, exact accounting-formatted amounts, and matched date offsets
+(bank date minus journal date: negative means earlier, positive means later).
+It includes explicit empty states. Reconciliation does not change the ledger or expose
+a new API.
+
+- Only posted journal entries touching Cash account `"1000"` are eligible.
+- Each journal entry's cash amount is the sum of its cash debits minus cash credits.
+  The signed amount must equal the bank amount exactly, including cents.
+- The bank date must be within **3 calendar days before or after** the journal date
+  (offset **-3 through +3, inclusive**); weekends and holidays are not skipped.
+- Matching is one-to-one. Bank records and eligible journal entries are processed
+  earliest-date first, retaining input order for ties. Each bank record consumes
+  the earliest eligible remaining journal entry; duplicates are not reused.
+- Unmatched lists use the same date/input ordering. Draft, void, and non-cash journal
+  entries are excluded from reconciliation entirely.
+- Bank data is read from `bank_transactions.json`; `ledger.json` contains no bank data.
 
 ## API
 

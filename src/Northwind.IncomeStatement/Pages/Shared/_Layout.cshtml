@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <main>
+    <main class="@ViewData["MainClass"]">
+        <nav class="site-nav" aria-label="Reports">
+            <a asp-page="/Index">Income statement</a>
+            <a asp-page="/Reconciliation">Bank reconciliation</a>
+        </nav>
         @RenderBody()
     </main>
     @await RenderSectionAsync("Scripts", required: false)

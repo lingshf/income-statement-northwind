@@ -9,6 +9,6 @@
 
   <ItemGroup>
     <Content Include="..\..\ledger.json" Link="ledger.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
+        <Content Include="..\..\bank_transactions.json" Link="bank_transactions.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />  </ItemGroup>
 
 </Project>
