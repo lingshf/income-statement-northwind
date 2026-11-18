@@ -23,6 +23,8 @@ dotnet run --project src/Northwind.IncomeStatement   # http://localhost:5208
 ```
 
 - **UI:** open `http://localhost:5208/` — defaults to Q1 2026; pick any start/end date.
+- **Bank reconciliation:** open `http://localhost:5208/reconciliation` (or use the navigation
+  link). Rules are in [`spec.md`](spec.md#bank-reconciliation).
 - **API:** `http://localhost:5208/income-statement?start=2026-01-01&end=2026-03-31` (see below).
 - The ledger is validated at startup; an invalid `ledger.json` stops the app with a list of
   every problem. Override the path with `--Ledger:Path=<file>`.
@@ -31,7 +33,10 @@ See [`NOTES.md`](NOTES.md) for the Q1 2026 result, decisions, verification and e
 
 ## Data
 
-- `ledger.json` — chart of accounts and journal entries; the application's only data source.
+- `ledger.json` — chart of accounts and journal entries; the application's only accounting data source.
+- `bank_transactions.json` — bank statement lines used only for bank reconciliation
+  (format in [`spec.md`](spec.md#bank-transactions-bank_transactionsjson)). Validated at
+  startup like the ledger; override the path with `--BankTransactions:Path=<file>`.
 - `ledger.csv` — the same journal, one row per line with account details joined in, for
   manual verification in a spreadsheet. Not read by the application.
 

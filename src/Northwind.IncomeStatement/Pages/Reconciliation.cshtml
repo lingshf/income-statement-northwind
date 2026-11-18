@@ -1,0 +1,141 @@
+@page "/reconciliation"
+@model ReconciliationModel
+@using System.Globalization
+@using Northwind.IncomeStatement.Domain
+@{
+    ViewData["Title"] = "Bank reconciliation";
+    ViewData["MainClass"] = "reconciliation-layout";
+    var result = Model.Result;
+    static string Iso(DateOnly date) => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+}
+
+<section class="statement reconciliation" aria-labelledby="reconciliation-heading">
+    <header class="statement-header">
+        <h1 id="reconciliation-heading">Bank reconciliation</h1>
+        <p class="statement-title">@Model.Company</p>
+        <p>Cash account @IncomeStatementService.CashAccountNumber &middot; All dates &middot; @Model.Currency</p>
+    </header>
+
+    <p>
+        Only posted cash entries are included. Signed amounts must match exactly;
+        the bank date may be up to @IncomeStatementService.MatchWindowDays calendar days before or after the journal date, inclusive.
+        Each record can be matched only once.
+        Date offsets are bank date minus journal date: negative means earlier, positive means later.
+    </p>
+    <dl class="reconciliation-summary">
+        <div><dt>Matched pairs</dt><dd>@result.Matches.Count</dd></div>
+        <div><dt>Unmatched bank entries</dt><dd>@result.UnmatchedBankEntries.Count</dd></div>
+        <div><dt>Unmatched journal entries</dt><dd>@result.UnmatchedJournalEntries.Count</dd></div>
+    </dl>
+
+    <section aria-labelledby="matched-heading">
+        <h2 id="matched-heading">Matched pairs</h2>
+        @if (result.Matches.Count == 0)
+        {
+            <p class="message info">No matching bank and journal entries were found.</p>
+        }
+        else
+        {
+            <div class="table-scroll" role="region" aria-labelledby="matched-heading" tabindex="0">
+                <table id="matched-entries">
+                    <caption class="visually-hidden">Matched bank and cash journal entries</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Bank entry</th>
+                            <th scope="col">Bank date</th>
+                            <th scope="col">Journal entry</th>
+                            <th scope="col">Journal date</th>
+                            <th scope="col">Date offset (days)</th>
+                            <th scope="col" class="amount">Amount (@Model.Currency)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var match in result.Matches)
+                        {
+                            <tr>
+                                <th scope="row">@match.BankEntry.Id <span class="entry-description">@match.BankEntry.Description</span></th>
+                                <td><time datetime="@Iso(match.BankEntry.Date)">@Iso(match.BankEntry.Date)</time></td>
+                                <td>@match.JournalEntry.Id <span class="entry-description">@match.JournalEntry.Memo</span></td>
+                                <td><time datetime="@Iso(match.JournalEntry.Date)">@Iso(match.JournalEntry.Date)</time></td>
+                                <td>@match.DateOffsetDays</td>
+                                <td class="amount">@match.BankEntry.Amount.ToAccountingString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section aria-labelledby="unmatched-bank-heading">
+        <h2 id="unmatched-bank-heading">Unmatched bank entries</h2>
+        @if (result.UnmatchedBankEntries.Count == 0)
+        {
+            <p class="message info">No unmatched bank entries.</p>
+        }
+        else
+        {
+            <div class="table-scroll" role="region" aria-labelledby="unmatched-bank-heading" tabindex="0">
+                <table id="unmatched-bank-entries">
+                    <caption class="visually-hidden">Bank entries with no matching cash journal entry</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Bank entry</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" class="amount">Amount (@Model.Currency)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in result.UnmatchedBankEntries)
+                        {
+                            <tr>
+                                <th scope="row">@entry.Id</th>
+                                <td><time datetime="@Iso(entry.Date)">@Iso(entry.Date)</time></td>
+                                <td>@entry.Description</td>
+                                <td class="amount">@entry.Amount.ToAccountingString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section aria-labelledby="unmatched-journal-heading">
+        <h2 id="unmatched-journal-heading">Unmatched journal entries</h2>
+        @if (result.UnmatchedJournalEntries.Count == 0)
+        {
+            <p class="message info">No unmatched journal entries.</p>
+        }
+        else
+        {
+            <div class="table-scroll" role="region" aria-labelledby="unmatched-journal-heading" tabindex="0">
+                <table id="unmatched-journal-entries">
+                    <caption class="visually-hidden">Posted cash journal entries with no matching bank entry</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Journal entry</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Memo</th>
+                            <th scope="col" class="amount">Cash amount (@Model.Currency)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in result.UnmatchedJournalEntries)
+                        {
+                            <tr>
+                                <th scope="row">@entry.Id</th>
+                                <td><time datetime="@Iso(entry.Date)">@Iso(entry.Date)</time></td>
+                                <td>@entry.Memo</td>
+                                <td class="amount">@IncomeStatementService.CashAmount(entry).ToAccountingString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <p class="note">Negative amounts are shown in parentheses. Cash amounts are debits minus credits. Unmatched records require review; they are not automatically errors.</p>
+</section>

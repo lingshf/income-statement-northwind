@@ -12,6 +12,70 @@ main {
   margin: 0 auto;
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+main.reconciliation-layout {
+  max-width: 1120px;
+}
+
+.reconciliation h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.reconciliation h2 {
+  margin-top: 2rem;
+  font-size: 1.15rem;
+}
+
+.reconciliation-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  padding: 1rem;
+  background: #eef4fb;
+}
+
+.reconciliation-summary dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.reconciliation thead th {
+  font-weight: 600;
+  border-bottom: 2px solid #999;
+}
+
+.reconciliation tbody th,
+.reconciliation tbody td {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+.reconciliation time {
+  white-space: nowrap;
+}
+
+.entry-description {
+  display: block;
+  min-width: 10rem;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+  color: #555;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -189,7 +253,8 @@ main {
     padding: 0;
   }
 
-  .controls {
+  .controls,
+  .site-nav {
     display: none;
   }
 
